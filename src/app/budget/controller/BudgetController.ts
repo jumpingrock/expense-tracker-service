@@ -1,9 +1,9 @@
-import { Authorized, Body, CurrentUser, Get, JsonController, OnUndefined, Post } from 'routing-controllers';
+import { Authorized, Body, CurrentUser, JsonController, OnUndefined, Post } from 'routing-controllers';
 import { BudgetCreationRequest } from './BudgetCreationRequest';
 import { BudgetService } from '../service/BudgetService';
 import { Budget } from '../Budget';
 
-@JsonController('/newBudget')
+@JsonController('/budget')
 export class BudgetController {
   @Authorized()
   @Post()

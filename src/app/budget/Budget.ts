@@ -1,9 +1,10 @@
+import { TargetMonthEnum } from './TargetMonthEnum';
 
 export class Budget {
   id: number;
   createdById: number;
-  budgetTargetMonth: Date;
-  budgetTargetYear: Date;
+  budgetTargetMonth: TargetMonthEnum;
+  budgetTargetYear: number;
   budget: number;
   createdAt: Date;
   updatedAt: Date;

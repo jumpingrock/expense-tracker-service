@@ -17,11 +17,11 @@ module.exports = {
         },
       },
       budget_target_month: {
-        type: Sequelize.DATE,
+        type: Sequelize.STRING,
         allowNull: false,
       },
       budget_target_year: {
-        type: Sequelize.DATE,
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       budget: {

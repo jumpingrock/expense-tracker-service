@@ -5,9 +5,9 @@ export class BudgetCreationRequest {
   @IsNotEmpty()
   budgetTargetMonth: string;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  budgetTargetYear: string;
+  budgetTargetYear: number;
 
   @IsNumber()
   @IsNotEmpty()

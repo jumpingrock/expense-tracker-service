@@ -9,12 +9,12 @@ import {
   Table, UpdatedAt,
 } from 'sequelize-typescript';
 import { UserDBModel } from '../user/UserDBModel';
-import { TargetMonthEnum } from './TargetMonthEnum';
+import { BudgetDBModel } from '../budget/BudgetDBModel';
 
 @Table({
-  tableName: 'budget',
+  tableName: 'expense',
 })
-export class BudgetDBModel extends Model {
+export class ExpenseDBModel extends Model {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.INTEGER)
@@ -28,26 +28,27 @@ export class BudgetDBModel extends Model {
   @BelongsTo(() => UserDBModel, 'created_by_id')
   createdBy: UserDBModel;
 
+  @ForeignKey(() => BudgetDBModel)
+  @AllowNull(false)
+  @Column({ field: 'budget_by_id', type: DataType.INTEGER })
+  budgetById: number;
+
+  @BelongsTo(() => BudgetDBModel, 'budget_by_id')
+  budgetBy: UserDBModel;
+
   @AllowNull(false)
   @Column({
-    field: 'budget_target_month',
+    field: 'credit_or_debit',
     type: DataType.STRING,
   })
-  budgetTargetMonth: TargetMonthEnum;
+  creditOrDebit: String;
 
   @AllowNull(false)
   @Column({
-    field: 'budget_target_year',
-    type: DataType.INTEGER,
+    field: 'amount',
+    type: DataType.FLOAT,
   })
-  budgetTargetYear: number;
-
-  @AllowNull(false)
-  @Column({
-    field: 'budget',
-    type: DataType.NUMBER,
-  })
-  budget: number;
+  amount: Number;
 
   @CreatedAt
   @Column({

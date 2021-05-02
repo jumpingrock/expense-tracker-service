@@ -17,7 +17,7 @@ export class Logger {
         }),
         format.errors({ stack: true }),
       ),
-      defaultMeta: { service: 'incident management revamped' },
+      defaultMeta: { service: 'Expense Tracker Service' },
       transports: [
         new transports.Console({
           format: winston.format.simple(),
