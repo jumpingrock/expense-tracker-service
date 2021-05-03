@@ -1,4 +1,3 @@
-import { Expense } from '../Expense';
 import { ExpenseRequest } from '../controller/ExpenseRequest';
 
 export class ExpenseService {

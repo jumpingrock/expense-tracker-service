@@ -1,7 +1,6 @@
 import { Authorized, Body, CurrentUser, JsonController, OnUndefined, Post } from 'routing-controllers';
 import { ExpenseRequest } from './ExpenseRequest';
 import { ExpenseService } from '../service/ExpenseService';
-import { Expense } from '../Expense';
 
 @JsonController('/expense')
 export class ExpenseController {

@@ -4,4 +4,3 @@ dist
 .env
 .circleci/
 postgres-data
-*.spec.ts
