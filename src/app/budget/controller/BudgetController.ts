@@ -12,8 +12,6 @@ import {
 import { BudgetCreationRequest } from './BudgetCreationRequest';
 import { BudgetService } from '../service/BudgetService';
 import { Budget } from '../Budget';
-import { ExpenseRequest } from '../../expense/controller/ExpenseRequest';
-import { ExpenseService } from '../../expense/service/ExpenseService';
 
 @JsonController('/budget')
 export class BudgetController {
