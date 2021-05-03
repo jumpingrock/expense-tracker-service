@@ -6,7 +6,7 @@ import { Budget } from '../Budget';
 
 export class BudgetService {
   async createNewBudget(userId: Number, budgetInfo: BudgetCreationRequest): Promise<Budget> {
-    let budgetDBResp: any
+    let budgetDBResp: BudgetDBModel
     const sequelize = DB.getInstance()
     await sequelize.transaction(async transaction => {
       budgetDBResp = await BudgetDBModel.create({
@@ -28,5 +28,21 @@ export class BudgetService {
         return new Error(err);
       })
     return budgets.map(budget => mapBudget(budget))
+  }
+
+  async updateBudgetById(userId: number, budgetObj: BudgetCreationRequest, budgetId: number): Promise<any> {
+    const sequelize = DB.getInstance()
+    await sequelize.transaction(async transaction => {
+      await BudgetDBModel.update({
+        budgetTargetMonth: budgetObj.budgetTargetMonth,
+        budgetTargetYear: budgetObj.budgetTargetYear,
+        budget: budgetObj.budgetAmt
+      }, { where: { id: budgetId, createdById: userId }, transaction })
+    }).catch(err => {
+      return new Error(err);
+    })
+
+    const budgetDBResp: BudgetDBModel = await BudgetDBModel.findByPk(budgetId)
+    return mapBudget(budgetDBResp)
   }
 }

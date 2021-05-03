@@ -1,7 +1,19 @@
-import { Authorized, Body, CurrentUser, Get, JsonController, OnUndefined, Post } from 'routing-controllers';
+import {
+  Authorized,
+  Body,
+  CurrentUser,
+  Get,
+  JsonController,
+  OnUndefined,
+  Param,
+  Patch,
+  Post,
+} from 'routing-controllers';
 import { BudgetCreationRequest } from './BudgetCreationRequest';
 import { BudgetService } from '../service/BudgetService';
 import { Budget } from '../Budget';
+import { ExpenseRequest } from '../../expense/controller/ExpenseRequest';
+import { ExpenseService } from '../../expense/service/ExpenseService';
 
 @JsonController('/budget')
 export class BudgetController {
@@ -21,5 +33,15 @@ export class BudgetController {
     @CurrentUser() userId,
   ): Promise<Budget[]> {
     return await new BudgetService().getListOfUserBudget(userId)
+  }
+
+  @Authorized()
+  @Patch('/budgetId/:budgetId')
+  @OnUndefined(201)
+  async updateExpense(
+    @CurrentUser() userId: number,
+    @Param('budget_id') budgetId: number,
+    @Body() requestParam: BudgetCreationRequest,): Promise<any> {
+    return await new BudgetService().updateBudgetById(userId, requestParam, budgetId)
   }
 }

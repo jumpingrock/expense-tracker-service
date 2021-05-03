@@ -44,7 +44,7 @@ export class ExpenseService {
       await ExpenseDBModel.update({
         creditOrDebit: expenseObj.creditOrDebit,
         amount: expenseObj.amount
-      }, { where: { id: expenseId, createdById: userId } })
+      }, { where: { id: expenseId, createdById: userId }, transaction })
     })
     const expenseDBResp: any = await ExpenseDBModel.findByPk(expenseId)
     return ExpenseMapper(expenseDBResp)
