@@ -41,14 +41,14 @@ export class ExpenseDBModel extends Model {
     field: 'credit_or_debit',
     type: DataType.STRING,
   })
-  creditOrDebit: String;
+  creditOrDebit: string;
 
   @AllowNull(false)
   @Column({
     field: 'amount',
     type: DataType.FLOAT,
   })
-  amount: Number;
+  amount: number;
 
   @CreatedAt
   @Column({

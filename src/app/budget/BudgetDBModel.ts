@@ -3,13 +3,14 @@ import {
   AutoIncrement, BelongsTo,
   Column, CreatedAt,
   DataType,
-  ForeignKey,
+  ForeignKey, HasMany,
   Model,
   PrimaryKey,
   Table, UpdatedAt,
 } from 'sequelize-typescript';
 import { UserDBModel } from '../user/UserDBModel';
 import { TargetMonthEnum } from './TargetMonthEnum';
+import { ExpenseDBModel } from '../expense/ExpenseDBModel';
 
 @Table({
   tableName: 'budget',
@@ -62,4 +63,7 @@ export class BudgetDBModel extends Model {
     type: DataType.DATE,
   })
   public readonly updatedAt: Date;
+
+  @HasMany(() => ExpenseDBModel)
+  activityLog: ExpenseDBModel[];
 }
