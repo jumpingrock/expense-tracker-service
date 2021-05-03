@@ -9,9 +9,9 @@ export class ExpenseController {
   @Post()
   @OnUndefined(201)
   async createExpense(
-    @CurrentUser() userId,
-    @Body() requestParam: ExpenseRequest,
-  ): Promise<Expense> {
+  @CurrentUser() userId,
+  @Body() requestParam: ExpenseRequest,
+  ): Promise<any> {
     return await new ExpenseService().createNewExpense(userId, requestParam)
   }
 }

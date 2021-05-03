@@ -1,4 +1,4 @@
-import { Authorized, Body, CurrentUser, JsonController, OnUndefined, Post } from 'routing-controllers';
+import { Authorized, Body, CurrentUser, Get, JsonController, OnUndefined, Param, Post } from 'routing-controllers';
 import { BudgetCreationRequest } from './BudgetCreationRequest';
 import { BudgetService } from '../service/BudgetService';
 import { Budget } from '../Budget';
@@ -15,11 +15,11 @@ export class BudgetController {
     return await new BudgetService().createNewBudget(userId, requestParam)
   }
 
-  // @Authorized
-  // @Get()
-  // async getUserBudget(
-  //   @CurrentUser() userId,
-  // ): Promise<Budget[]>{
-  //   return await new BudgetService().getUserBudget(userId)
-  // }
+  @Authorized()
+  @Get()
+  async getListOfUserBudget(
+    @CurrentUser() userId,
+  ): Promise<Budget[]> {
+    return await new BudgetService().getListOfUserBudget(userId)
+  }
 }

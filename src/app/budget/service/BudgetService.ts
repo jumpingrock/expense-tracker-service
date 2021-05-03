@@ -1,7 +1,7 @@
 import { BudgetDBModel } from '../BudgetDBModel';
 import { DB } from '../../DB';
 import { BudgetCreationRequest } from '../controller/BudgetCreationRequest';
-import { mapCreatedBudget } from './BudgetMapper';
+import { mapBudget } from './BudgetMapper';
 import { Budget } from '../Budget';
 import { TargetMonthEnum } from '../TargetMonthEnum';
 import { Logger } from '../../../logger/logger';
@@ -22,11 +22,14 @@ export class BudgetService {
       return new Error(err);
     })
 
-    return mapCreatedBudget(budgetDBResp)
+    return mapBudget(budgetDBResp)
   }
 
-  // async getUserBudget(userId: Number): Promise<Budget> {
-  //   const getBudget = BudgetDBModel.findOne({ where: { userId } })
-  //   return null
-  // }
+  async getListOfUserBudget(userId: number): Promise<Budget[]> {
+    const budgets: any = await BudgetDBModel.findAll({ where: { createdById: userId }, order: [['createdAt', 'DESC']], })
+      .catch(err => {
+        return new Error(err);
+      })
+    return budgets.map(budget => mapBudget(budget))
+  }
 }

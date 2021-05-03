@@ -1,7 +1,7 @@
 import { BudgetDBModel } from '../BudgetDBModel';
 import { Budget } from '../Budget';
 
-export const mapCreatedBudget = (budgetDBModel: BudgetDBModel): Budget => {
+export const mapBudget = (budgetDBModel: BudgetDBModel): Budget => {
   const budget : Budget = {
     id: budgetDBModel.id,
     createdById: budgetDBModel.createdById,
@@ -12,4 +12,10 @@ export const mapCreatedBudget = (budgetDBModel: BudgetDBModel): Budget => {
     updatedAt: budgetDBModel.updatedAt
   }
   return budget
+}
+
+export const mapListOfBudget = (budgetDBModel: BudgetDBModel[]): Budget[] => {
+  const budgetList: Budget[] = budgetDBModel.map(budget => mapBudget(budget))
+
+  return budgetList
 }
