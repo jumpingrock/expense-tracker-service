@@ -17,84 +17,6 @@ jobs:
           command: npm test -- --runInBand
           environment:
             NODE_OPTIONS: --max_old_space_size=4096
-  deploy-to-test:
-    docker:
-      - image: 'cimg/base:stable'
-    steps:
-      - checkout
-      - setup_remote_docker:
-          docker_layer_caching: false
-      - run:
-          name: Build app binary and Docker image
-          command: |
-            echo ${GCP_PROJECT_STG_KEY} | base64 --decode --ignore-garbage > $HOME/gcloud-service-key.json
-            echo 'export GOOGLE_CLOUD_KEYS=$(cat $HOME/gcloud-service-key.json)' >> $BASH_ENV
-            docker build \
-            --build-arg NODE_ENV=test \
-            --build-arg SUPER_ADMIN_USERNAME_ARG=$SUPER_ADMIN_USERNAME_TEST_ARG \
-            --build-arg SUPER_ADMIN_PWD_ARG=$SUPER_ADMIN_PWD_TEST_ARG \
-            --build-arg DB_USERNAME_ARG=$DB_USERNAME_STG_ARG \
-            --build-arg DB_PWD_ARG=$DB_PWD_STG_ARG \
-            --build-arg DB_HOSTNAME_ARG=$DB_HOSTNAME_STG_ARG \
-            --build-arg JWT_SECRET_ARG=$JWT_SECRET_TEST_ARG \
-            --build-arg TOKEN_EXPIRY_ARG=$TOKEN_EXPIRY_TEST_ARG \
-            -t gcr.io/$GOOGLE_PROJECT_STG_ID/$GOOGLE_CLOUD_RUN_API_TEST_SERVICE_NAME .
-      - gcp-gcr/gcr-auth:
-          gcloud-service-key: GOOGLE_CLOUD_KEYS
-          google-project-id: GOOGLE_PROJECT_STG_ID
-          google-compute-zone: GOOGLE_COMPUTE_STG_ZONE
-      - gcp-gcr/push-image:
-          google-project-id: GOOGLE_PROJECT_STG_ID
-          registry-url: 'gcr.io'
-          image: $GOOGLE_CLOUD_RUN_API_TEST_SERVICE_NAME
-      - cloudrun/deploy:
-          image: 'gcr.io/$GOOGLE_PROJECT_STG_ID/$GOOGLE_CLOUD_RUN_API_TEST_SERVICE_NAME'
-          platform: managed
-          region: $GOOGLE_COMPUTE_STG_ZONE
-          service-name: $GOOGLE_CLOUD_RUN_API_TEST_SERVICE_NAME
-          unauthenticated: true
-      - run:
-          command: >
-            # verify if the service is deployed
-
-            GCP_API_RESULTS=$(curl -s "https://ms-api-test-service-s7wpobyooa-as.a.run.app/version")
-
-            echo $GCP_API_RESULTS
-
-            if [[ "$GCP_API_RESULTS" != *"appVersion"* ]]; then
-              echo "Result is unexpected"
-              echo "Result: \n${GCP_API_RESULTS}"
-              exit 1;
-            fi
-          name: Test managed deployed service.
-  api-test:
-    executor:
-      name: node/default
-    working_directory: ~/maintain-simple-service/api-tests
-    steps:
-      - checkout:
-          path: ~/maintain-simple-service
-      - run:
-          name: configure env vars
-          command: |
-            echo ${GCP_PROJECT_STG_KEY} | base64 --decode --ignore-garbage > $HOME/gcloud-service-key.json
-            echo 'export GOOGLE_CLOUD_KEYS=$(cat $HOME/gcloud-service-key.json)' >> $BASH_ENV
-      - gcp-gcr/gcr-auth:
-          gcloud-service-key: GOOGLE_CLOUD_KEYS
-          google-project-id: GOOGLE_PROJECT_STG_ID
-          google-compute-zone: GOOGLE_COMPUTE_STG_ZONE
-      - run:
-          name: run cloud sql proxy
-          command: |
-            wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
-            chmod +x cloud_sql_proxy
-            nohup ./cloud_sql_proxy -instances=$GOOGLE_PROJECT_STG_ID:asia-southeast1:maintain-simple=tcp:3306 &
-            ps | grep cloud_sql_proxy
-            echo proxy setup done.
-      - run: npm install
-      - run: DB_USERNAME=$DB_USERNAME_STG_ARG DB_PWD=$DB_PWD_STG_ARG DB_HOSTNAME=localhost DB_PORT=3306 NODE_ENV=test npm test
-      - store_artifacts:
-          path: ~/maintain-simple-service/api-tests/mochawesome-report
   deploy-to-staging:
     docker:
       - image: 'cimg/base:stable'
@@ -150,25 +72,7 @@ workflows:
   build-test-deploy:
     jobs:
       - build-and-test
-      - deploy-to-test:
-          requires:
-            - build-and-test
-          filters:
-            branches:
-              only: main
-            tags:
-              only: /.*/
-      - api-test:
-          requires:
-            - deploy-to-test
-          filters:
-            branches:
-              only: main
-            tags:
-              only: /.*/
       - deploy-to-staging:
-          requires:
-            - api-test
           filters:
             branches:
               only: main
